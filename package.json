@@ -1,0 +1,22 @@
+{
+  "name": "randomchat",
+  "version": "0.1.0",
+  "description": "Random 1-on-1 video and text chat with strangers",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node tests/e2e.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.3"
+  }
+}

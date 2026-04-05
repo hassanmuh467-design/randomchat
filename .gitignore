@@ -1,0 +1,8 @@
+node_modules
+.env
+.env.local
+*.log
+.DS_Store
+
+# Runtime data (SQLite DB is regenerated from schema on boot)
+data/

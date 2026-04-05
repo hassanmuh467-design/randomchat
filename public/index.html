@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b12" />
+    <title>Random Chat — Talk to Strangers by Video &amp; Text | RandomChat</title>
+    <meta name="description" content="Free random video chat with strangers. No sign up, no download. Meet new people 1-on-1 by video or text in seconds. 18+." />
+    <meta name="keywords" content="random chat, talk to strangers, video chat, random video chat, chat with strangers, omegle alternative, stranger chat" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://randomchat.example/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="RandomChat" />
+    <meta property="og:title" content="Random Chat — Talk to Strangers by Video &amp; Text" />
+    <meta property="og:description" content="Free random video chat with strangers. No sign up, no download. Meet new people 1-on-1 in seconds. 18+." />
+    <meta property="og:url" content="https://randomchat.example/" />
+    <meta property="og:image" content="https://randomchat.example/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Random Chat — Talk to Strangers by Video &amp; Text" />
+    <meta name="twitter:description" content="Free random video chat with strangers. No sign up. 1-on-1 video or text in seconds. 18+." />
+    <meta name="twitter:image" content="https://randomchat.example/og.png" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- TODO pre-launch: add /favicon.ico (32x32) and /apple-touch-icon.png (180x180) -->
+    <!-- TODO pre-launch: add /og.png (1200x630) — referenced by og:image above -->
+    <!-- TODO pre-launch: replace all randomchat.example with your real domain -->
+
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "RandomChat",
+      "url": "https://randomchat.example/",
+      "description": "Free random video and text chat with strangers. No sign up required.",
+      "applicationCategory": "SocialNetworkingApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript and WebRTC support",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "audience": { "@type": "Audience", "suggestedMinAge": 18 }
+    }
+    </script>
+
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/age-gate.css" />
+    <script src="/age-gate.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo"></span>
+        <span class="name">RandomChat</span>
+      </div>
+      <div class="stats">
+        <span id="online">0</span> online
+      </div>
+    </header>
+
+    <main id="app">
+      <!-- LANDING -->
+      <section id="landing" class="landing">
+        <h1>Talk to strangers.<br /><span class="accent">Video or text.</span></h1>
+        <p class="sub">No sign up. No download. Be kind — 18+ only.</p>
+
+        <label class="interests-label">Interests <span class="muted">(optional, comma-separated)</span></label>
+        <input id="interests" type="text" placeholder="music, coding, travel" maxlength="120" />
+
+        <div class="cta-row">
+          <button id="startVideo" class="btn btn-primary">Start video chat</button>
+          <button id="startText" class="btn btn-ghost">Text only</button>
+        </div>
+
+        <p class="terms">
+          By clicking Start, you confirm you're 18+ and agree to be respectful.
+          Violators are reported and banned.
+        </p>
+      </section>
+
+      <!-- CHAT ROOM -->
+      <section id="room" class="room hidden">
+        <div class="videos">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <video id="localVideo" autoplay playsinline muted></video>
+          <div id="status" class="status">Looking for someone…</div>
+        </div>
+
+        <aside class="sidebar">
+          <div id="messages" class="messages"></div>
+          <div id="typing" class="typing hidden">Stranger is typing…</div>
+          <form id="chatForm" class="chat-form">
+            <input id="chatInput" type="text" placeholder="Say hi…" maxlength="1000" autocomplete="off" />
+            <button class="btn btn-send" type="submit">Send</button>
+          </form>
+          <div class="controls">
+            <button id="nextBtn" class="btn btn-next">Next ▶</button>
+            <button id="stopBtn" class="btn btn-ghost">Stop</button>
+            <button id="reportBtn" class="btn btn-danger" title="Report stranger">Report</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

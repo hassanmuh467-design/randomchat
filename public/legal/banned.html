@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b12" />
+    <title>Banned — RandomChat</title>
+    <meta name="description" content="You have been banned from RandomChat." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .legal-wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 60px 20px 80px;
+        line-height: 1.7;
+        text-align: left;
+        color: var(--text);
+      }
+      .legal-wrap h1 {
+        font-size: clamp(32px, 6vw, 48px);
+        line-height: 1.1;
+        margin: 0 0 16px;
+        letter-spacing: -0.02em;
+        color: var(--danger);
+      }
+      .legal-wrap h2 {
+        font-size: 18px;
+        margin: 28px 0 8px;
+        letter-spacing: -0.005em;
+      }
+      .legal-wrap p, .legal-wrap li { font-size: 15px; color: var(--text); }
+      .legal-wrap .lead { font-size: 16px; color: var(--muted); margin: 0 0 8px; }
+      .legal-wrap ul { padding-left: 22px; margin: 10px 0; }
+      .legal-wrap li { margin: 6px 0; }
+      .legal-wrap a { color: var(--accent-2); text-decoration: none; }
+      .legal-wrap a:hover { text-decoration: underline; }
+      .ban-info {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--danger);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin: 20px 0 28px;
+        font-size: 14px;
+      }
+      .ban-info .row { display: flex; gap: 8px; margin: 4px 0; }
+      .ban-info .label { color: var(--muted); min-width: 80px; font-size: 13px; }
+      .ban-info .value { color: var(--text); word-break: break-word; }
+      .home-btn {
+        display: inline-block;
+        padding: 12px 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        border-radius: var(--radius);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 16px;
+        transition: border-color 0.15s;
+      }
+      .home-btn:hover { border-color: var(--accent); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" style="text-decoration:none;color:inherit;">
+        <span class="logo"></span>
+        <span class="name">RandomChat</span>
+      </a>
+    </header>
+
+    <main class="legal-wrap">
+      <h1>You're banned.</h1>
+      <p class="lead">Your access to RandomChat has been suspended.</p>
+
+      <div class="ban-info">
+        <div class="row">
+          <span class="label">Reason:</span>
+          <span class="value" id="reason">Not specified</span>
+        </div>
+        <div class="row">
+          <span class="label">Expires:</span>
+          <span class="value" id="until">Unknown</span>
+        </div>
+      </div>
+
+      <h2>Why did this happen?</h2>
+      <p>
+        Bans are issued when users violate our Terms of Service. The most common triggers:
+      </p>
+      <ul>
+        <li>Three or more reports were filed against you by other users.</li>
+        <li>Automated moderation flagged prohibited behavior.</li>
+        <li>A moderator reviewed your activity and took action.</li>
+      </ul>
+      <p>
+        Temporary bans typically last <strong>7 days</strong>. Permanent bans apply for
+        severe violations such as harassment, exposure to minors, CSAM, threats, or
+        attempting to circumvent moderation.
+      </p>
+
+      <h2>Think this is a mistake?</h2>
+      <p>
+        If you believe this ban was issued in error, you can appeal. Email
+        <a href="mailto:appeals@[yourdomain].com">appeals@[yourdomain].com</a> with a brief
+        explanation. Include the approximate time you were banned so we can locate the
+        record.
+      </p>
+
+      <a href="/" class="home-btn">&larr; Back to home</a>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+        function getParam(name) {
+          try {
+            var params = new URLSearchParams(window.location.search);
+            return params.get(name);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        var reasonEl = document.getElementById("reason");
+        var untilEl = document.getElementById("until");
+
+        var reason = getParam("reason");
+        if (reason && reason.trim().length > 0) {
+          // Clamp length and assign via textContent (never innerHTML)
+          var clean = reason.slice(0, 500);
+          reasonEl.textContent = clean;
+        }
+
+        var until = getParam("until");
+        if (until) {
+          var ms = Number(until);
+          if (!isNaN(ms) && ms > 0) {
+            try {
+              var d = new Date(ms);
+              if (!isNaN(d.getTime())) {
+                untilEl.textContent = d.toLocaleString();
+              }
+            } catch (e) {
+              // leave default
+            }
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

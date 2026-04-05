@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /legal/terms.html
+Allow: /legal/privacy.html
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /legal/banned.html
+Disallow: /socket.io/
+
+Sitemap: https://randomchat.example/sitemap.xml

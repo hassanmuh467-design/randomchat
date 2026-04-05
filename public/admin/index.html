@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>RandomChat Admin</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="name">RandomChat &mdash; Admin</div>
+    </div>
+    <div class="top-actions">
+      <button id="refreshBtn" class="btn btn-ghost">Refresh</button>
+      <a id="logoutLink" href="#" class="btn btn-ghost">Logout</a>
+    </div>
+  </header>
+
+  <main class="admin-wrap">
+    <section class="stat-row" aria-label="Summary statistics">
+      <div class="stat-card">
+        <div class="stat-number" id="statReports">0</div>
+        <div class="stat-label">Total Reports</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statBans">0</div>
+        <div class="stat-label">Active Bans</div>
+      </div>
+    </section>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="reports" id="tabReports">Reports</button>
+      <button class="tab" role="tab" data-tab="bans" id="tabBans">Bans</button>
+    </nav>
+
+    <section class="tab-panel" id="panelReports" role="tabpanel" aria-labelledby="tabReports">
+      <div class="table-wrap">
+        <table class="data-table" id="reportsTable">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Reporter IP</th>
+              <th>Target IP</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="reportsBody"></tbody>
+        </table>
+        <div class="empty-placeholder hidden" id="reportsEmpty">No reports yet.</div>
+        <div class="error-placeholder hidden" id="reportsError"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panelBans" role="tabpanel" aria-labelledby="tabBans">
+      <div class="table-wrap">
+        <table class="data-table" id="bansTable">
+          <thead>
+            <tr>
+              <th>Banned IP</th>
+              <th>Reason</th>
+              <th>Created</th>
+              <th>Expires</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bansBody"></tbody>
+        </table>
+        <div class="empty-placeholder hidden" id="bansEmpty">No active bans.</div>
+        <div class="error-placeholder hidden" id="bansError"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin/admin.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+/* Age Gate Modal */
+.ag-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: auto;
+}
+
+.ag-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.ag-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.ag-body {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.ag-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ag-btn {
+  display: inline-block;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.ag-btn:hover { border-color: var(--accent); }
+.ag-btn:active { transform: scale(0.98); }
+.ag-btn:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.35);
+}
+
+.ag-btn-primary {
+  background: linear-gradient(135deg, var(--accent-2), #2fa89e);
+  border-color: transparent;
+  color: #06121a;
+  box-shadow: 0 10px 30px rgba(79, 209, 197, 0.25);
+}
+.ag-btn-primary:hover { border-color: transparent; filter: brightness(1.05); }
+
+.ag-btn-ghost {
+  background: transparent;
+}
+
+.ag-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 12px;
+}
+
+.ag-footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.ag-footer a:hover { color: var(--text); }
+
+/* Mobile */
+@media (max-width: 520px) {
+  .ag-backdrop { padding: 16px; }
+  .ag-card { padding: 24px; }
+  .ag-title { font-size: 20px; }
+}

@@ -37,6 +37,29 @@
   };
 
   // --- Helpers ------------------------------------------------------------
+  function showAIAvatar(name) {
+    let el = document.getElementById("aiAvatar");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "aiAvatar";
+      el.className = "ai-avatar";
+      const videoBox = document.querySelector(".videos");
+      if (videoBox) videoBox.appendChild(el);
+    }
+    // Random feminine avatar with "camera off" label
+    const initials = (name || "?")[0].toUpperCase();
+    el.innerHTML =
+      '<div class="ai-avatar-circle">' + initials + "</div>" +
+      '<div class="ai-avatar-label">Camera off</div>';
+    el.classList.remove("hidden");
+  }
+
+  function hideAIAvatar() {
+    const el = document.getElementById("aiAvatar");
+    if (el) el.classList.add("hidden");
+    remoteVideo.style.display = "";
+  }
+
   function setStatus(text) {
     if (!text) {
       statusEl.classList.add("hidden");
@@ -157,6 +180,7 @@
 
   function goNext() {
     closePeer();
+    hideAIAvatar();
     clearMessages();
     paired = false;
     setStatus("Looking for someone…");
@@ -165,6 +189,7 @@
 
   function goStop() {
     closePeer();
+    hideAIAvatar();
     paired = false;
     socket.emit("stop");
     // Stop local media
@@ -192,15 +217,25 @@
     setStatus("Looking for someone…");
   });
 
-  socket.on("paired", ({ initiator }) => {
+  socket.on("paired", ({ initiator, isAI, aiName }) => {
     paired = true;
-    addMessage("You're connected. Say hi!", "sys");
-    setStatus(videoMode ? "Connecting video…" : "");
-    if (videoMode) {
-      createPeer(initiator);
-    } else {
-      // Text-only: no peer connection, just messaging
+    if (isAI) {
+      // AI partner: no WebRTC, show avatar placeholder
+      addMessage("You're connected. Say hi!", "sys");
       setStatus("");
+      remoteVideo.style.display = "none";
+      showAIAvatar(aiName);
+    } else {
+      // Human partner
+      hideAIAvatar();
+      remoteVideo.style.display = "";
+      addMessage("You're connected. Say hi!", "sys");
+      setStatus(videoMode ? "Connecting video…" : "");
+      if (videoMode) {
+        createPeer(initiator);
+      } else {
+        setStatus("");
+      }
     }
   });
 
@@ -215,6 +250,7 @@
   socket.on("partner-left", () => {
     addMessage("Stranger disconnected.", "sys");
     closePeer();
+    hideAIAvatar();
     paired = false;
     setStatus("Looking for someone…");
     // Auto re-queue for a smoother experience

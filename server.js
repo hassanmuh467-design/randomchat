@@ -14,6 +14,7 @@ import fs from "node:fs";
 import * as dbModule from "./lib/db.js";
 import { handleReport, checkBan } from "./lib/moderation.js";
 import { createRateLimiter } from "./lib/rate-limit.js";
+import * as aiBot from "./lib/ai-bot.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -193,12 +194,66 @@ function findMatch(socket) {
   return false;
 }
 
+// --- AI fallback state -------------------------------------------------------
+const aiPartners = new Map(); // socketId -> true (marks partner as AI)
+const aiTimers = new Map();   // socketId -> setTimeout id (AI queue timer)
+const AI_WAIT_MS = 12_000;    // pair with AI after 12s of waiting
+
+function cancelAiTimer(socketId) {
+  const timer = aiTimers.get(socketId);
+  if (timer) { clearTimeout(timer); aiTimers.delete(socketId); }
+}
+
+function pairWithAI(socket) {
+  if (!aiBot.isEnabled()) return;
+  if (partners.has(socket.id)) return; // already matched a human
+  if (!waiting.has(socket.id)) return;  // no longer waiting
+
+  waiting.delete(socket.id);
+  aiPartners.set(socket.id, true);
+  const persona = aiBot.startConversation(socket.id);
+  socket.emit("paired", { partnerId: "ai", initiator: false, isAI: true, aiName: persona.name });
+
+  // AI sends opener after a natural delay
+  const opener = aiBot.getOpener();
+  const delay = 1500 + Math.random() * 2000;
+  setTimeout(() => {
+    if (aiPartners.has(socket.id)) {
+      socket.emit("typing", true);
+      setTimeout(() => {
+        if (aiPartners.has(socket.id)) {
+          socket.emit("typing", false);
+          socket.emit("message", opener);
+        }
+      }, aiBot.typingDelay(opener));
+    }
+  }, delay);
+
+  broadcastStats();
+}
+
+function unpairAI(socketId) {
+  if (!aiPartners.has(socketId)) return false;
+  aiPartners.delete(socketId);
+  aiBot.endConversation(socketId);
+  return true;
+}
+
 function enqueue(socket) {
   if (partners.has(socket.id)) return; // already paired
   if (findMatch(socket)) return;
   waiting.add(socket.id);
   socket.emit("waiting");
   broadcastStats();
+
+  // Start AI fallback timer
+  if (aiBot.isEnabled()) {
+    cancelAiTimer(socket.id);
+    aiTimers.set(socket.id, setTimeout(() => {
+      aiTimers.delete(socket.id);
+      pairWithAI(socket);
+    }, AI_WAIT_MS));
+  }
 }
 
 function unpair(socketId, notifyPartner = true) {
@@ -213,6 +268,17 @@ function unpair(socketId, notifyPartner = true) {
   return partnerId;
 }
 
+// --- Inflated online count ---------------------------------------------------
+const ONLINE_FLOOR = 200_000;
+let fakeOnlineBase = ONLINE_FLOOR + Math.floor(Math.random() * 15000);
+function getDisplayOnline() {
+  // Slow drift: ±50-200 per broadcast cycle
+  fakeOnlineBase += Math.floor(Math.random() * 400) - 200;
+  if (fakeOnlineBase < ONLINE_FLOOR) fakeOnlineBase = ONLINE_FLOOR + Math.floor(Math.random() * 3000);
+  if (fakeOnlineBase > ONLINE_FLOOR + 50000) fakeOnlineBase = ONLINE_FLOOR + 30000;
+  return Math.max(io.engine.clientsCount, fakeOnlineBase);
+}
+
 // Debounced stats broadcast — coalesces bursts (pair + enqueue + broadcast
 // fire together) into a single emit 250ms after the last state change.
 let statsTimer = null;
@@ -221,7 +287,7 @@ function broadcastStats() {
   statsTimer = setTimeout(() => {
     statsTimer = null;
     io.emit("stats", {
-      online: io.engine.clientsCount,
+      online: getDisplayOnline(),
       waiting: waiting.size,
       paired: partners.size,
     });
@@ -286,51 +352,89 @@ io.on("connection", (socket) => {
       : [];
     interests.set(socket.id, tags);
 
-    // If already paired, leave current partner first
+    // If already paired (human or AI), leave current partner first
     if (partners.has(socket.id)) unpair(socket.id, true);
+    unpairAI(socket.id);
+    cancelAiTimer(socket.id);
     enqueue(socket);
   });
 
   socket.on("next", () => {
-    if (!findNextRateLimiter(socket.id)) return; // silently drop
+    if (!findNextRateLimiter(socket.id)) return;
 
     unpair(socket.id, true);
+    unpairAI(socket.id);
+    cancelAiTimer(socket.id);
     enqueue(socket);
   });
 
   socket.on("stop", () => {
     unpair(socket.id, true);
+    unpairAI(socket.id);
+    cancelAiTimer(socket.id);
     waiting.delete(socket.id);
     broadcastStats();
   });
 
-  // Relay WebRTC signaling to the current partner only
+  // Relay WebRTC signaling to the current partner only (skip for AI partners)
   socket.on("signal", (data) => {
+    if (aiPartners.has(socket.id)) return; // AI has no WebRTC
     const partnerId = partners.get(socket.id);
     if (!partnerId) return;
     io.to(partnerId).emit("signal", data);
   });
 
-  // Relay text chat
+  // Relay text chat — or route to AI
   socket.on("message", (text) => {
-    const partnerId = partners.get(socket.id);
-    if (!partnerId) return;
     const clean = String(text || "").slice(0, 1000);
     if (!clean) return;
+
+    // AI partner: send to GPT
+    if (aiPartners.has(socket.id)) {
+      (async () => {
+        socket.emit("typing", true);
+        const reply = await aiBot.getReply(socket.id, clean);
+        if (!reply || !aiPartners.has(socket.id)) {
+          socket.emit("typing", false);
+          return;
+        }
+        // Simulate typing delay
+        setTimeout(() => {
+          if (aiPartners.has(socket.id)) {
+            socket.emit("typing", false);
+            socket.emit("message", reply);
+          }
+        }, aiBot.typingDelay(reply));
+      })();
+      return;
+    }
+
+    // Human partner: relay
+    const partnerId = partners.get(socket.id);
+    if (!partnerId) return;
     io.to(partnerId).emit("message", clean);
   });
 
   // Typing indicator
   socket.on("typing", (isTyping) => {
+    if (aiPartners.has(socket.id)) return; // AI doesn't need to know
     const partnerId = partners.get(socket.id);
     if (!partnerId) return;
     io.to(partnerId).emit("typing", Boolean(isTyping));
   });
 
   socket.on("report", (reason) => {
+    // If reporting AI, just skip to next
+    if (aiPartners.has(socket.id)) {
+      unpairAI(socket.id);
+      cancelAiTimer(socket.id);
+      enqueue(socket);
+      return;
+    }
+
     const partnerId = partners.get(socket.id);
     const partnerSocket = partnerId ? getSocket(partnerId) : null;
-    if (!partnerSocket || !partnerSocket.data.ip) return; // nothing to report
+    if (!partnerSocket || !partnerSocket.data.ip) return;
     const target_ip = partnerSocket.data.ip;
 
     console.log(
@@ -361,6 +465,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     unpair(socket.id, true);
+    unpairAI(socket.id);
+    cancelAiTimer(socket.id);
     waiting.delete(socket.id);
     interests.delete(socket.id);
 

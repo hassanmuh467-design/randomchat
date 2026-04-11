@@ -197,7 +197,7 @@ function findMatch(socket) {
 // --- AI fallback state -------------------------------------------------------
 const aiPartners = new Map(); // socketId -> true (marks partner as AI)
 const aiTimers = new Map();   // socketId -> setTimeout id (AI queue timer)
-const AI_WAIT_MS = Number(process.env.AI_WAIT_MS) || 4_000; // pair with AI after 4s of waiting (tunable)
+const AI_WAIT_MS = Number(process.env.AI_WAIT_MS) || 5_000; // pair with AI after 5s of waiting (tunable)
 
 function cancelAiTimer(socketId) {
   const timer = aiTimers.get(socketId);
@@ -211,11 +211,12 @@ function pairWithAI(socket) {
 
   waiting.delete(socket.id);
   aiPartners.set(socket.id, true);
-  const persona = aiBot.startConversation(socket.id);
+  const userGender = socket.data.gender || "m";
+  const persona = aiBot.startConversation(socket.id, userGender);
   socket.emit("paired", { partnerId: "ai", initiator: false, isAI: true, aiName: persona.name });
 
   // AI sends opener after a natural delay
-  const opener = aiBot.getOpener();
+  const opener = aiBot.getOpener(persona.gender);
   const delay = 1500 + Math.random() * 2000;
   setTimeout(() => {
     if (aiPartners.has(socket.id)) {
@@ -351,6 +352,9 @@ io.on("connection", (socket) => {
           .slice(0, 5)
       : [];
     interests.set(socket.id, tags);
+
+    // Store user gender for opposite-gender AI pairing ("m" default)
+    socket.data.gender = payload.gender === "f" ? "f" : "m";
 
     // If already paired (human or AI), leave current partner first
     if (partners.has(socket.id)) unpair(socket.id, true);

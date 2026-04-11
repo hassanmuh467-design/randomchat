@@ -132,6 +132,62 @@ body {
 }
 #interests::placeholder { color: var(--muted); }
 
+/* Gender pill toggle */
+.gender-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 22px;
+}
+.gender-label {
+  font-family: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--muted);
+}
+.gender-pills {
+  display: inline-flex;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+.pill span {
+  padding: 9px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--muted);
+  transition: all 0.2s;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+.pill:hover span { color: var(--text); }
+.pill input:checked + span {
+  background: linear-gradient(135deg, #9d4edd 0%, #c77dff 50%, #ff6b9d 100%);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(157, 78, 221, 0.4);
+}
+.pill input:focus-visible + span {
+  box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.4);
+}
+
 .cta-row { display: flex; gap: 12px; margin: 20px 0 16px; }
 
 .btn {

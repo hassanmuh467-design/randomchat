@@ -73,6 +73,20 @@
         <h1>Say hi to <span class="accent">someone new.</span></h1>
         <p class="sub">Meet &amp; Greet — one-on-one video or text. No sign up. Be kind, 18+ only.</p>
 
+        <div class="gender-row">
+          <span class="gender-label">I'm a</span>
+          <div class="gender-pills" role="radiogroup" aria-label="I am a">
+            <label class="pill">
+              <input type="radio" name="gender" value="m" checked />
+              <span>Guy</span>
+            </label>
+            <label class="pill">
+              <input type="radio" name="gender" value="f" />
+              <span>Girl</span>
+            </label>
+          </div>
+        </div>
+
         <label class="interests-label">Interests <span class="muted">(optional, comma-separated)</span></label>
         <input id="interests" type="text" placeholder="music, coding, travel" maxlength="120" />
 

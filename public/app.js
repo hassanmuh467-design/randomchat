@@ -89,6 +89,11 @@
       .slice(0, 5);
   }
 
+  function getGender() {
+    const checked = document.querySelector('input[name="gender"]:checked');
+    return checked && checked.value === "f" ? "f" : "m";
+  }
+
   async function getMedia() {
     if (localStream || !videoMode) return localStream;
     try {
@@ -175,7 +180,7 @@
     setStatus("Looking for someone…");
 
     if (videoMode) await getMedia();
-    socket.emit("find", { interests: parseInterests() });
+    socket.emit("find", { interests: parseInterests(), gender: getGender() });
   }
 
   function goNext() {
@@ -254,7 +259,7 @@
     paired = false;
     setStatus("Looking for someone…");
     // Auto re-queue for a smoother experience
-    socket.emit("find", { interests: parseInterests() });
+    socket.emit("find", { interests: parseInterests(), gender: getGender() });
   });
 
   // --- UI bindings --------------------------------------------------------

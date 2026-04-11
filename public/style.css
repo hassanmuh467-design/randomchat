@@ -294,6 +294,7 @@ body {
   border: 1.5px solid rgba(157, 78, 221, 0.4);
   background: #000;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  transform: scaleX(-1);
 }
 .status {
   position: absolute;

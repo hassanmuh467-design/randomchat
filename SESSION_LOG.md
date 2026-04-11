@@ -187,3 +187,52 @@ confirmed in-character and responsive:
 
 ### Blockers
 None right now. App is live, themed, and AI is responding.
+
+## 2026-04-10 (evening) — Adult chat prompt + AI timeout audit
+
+### Shipped
+- `2c1dc2f` **Loosen AI chat for adult 18+ platform** — rewrote the system
+  prompt in `lib/ai-bot.js` so AI reciprocates flirty and suggestive
+  messages when the user leads. New `ADULT CHAT` section gives explicit
+  reciprocation examples. Bolder `flirtStyle` strings (removed "but classy"
+  hedging). Strengthened the minor-safety rule to ABSOLUTE HARD RULE — any
+  hint of being under 18 triggers immediate full platonic mode. All other
+  safety rails (contact info, URLs, meetups, money, bot identity) intact.
+  Claude Haiku's trained guardrails still cap at suggestive/implied, which
+  is a feature (no payment processor / app store risk).
+
+### AI timeout audit (documented for future reference)
+Walked through all timeout paths in the AI flow:
+1. **Pairing timeout** — `AI_WAIT_MS = 5000` in `server.js:200`. User waits
+   5s in queue before being paired with AI. Env-tunable.
+2. **Conversation memory timeout** — `lib/ai-bot.js:155` sweeps conversations
+   every 60s, deletes any inactive for 30 min. **Subtle bug:** if user then
+   sends a new message, `getReply` returns null (conversation not found)
+   → typing indicator fires then nothing. Silent dead chat. Fix TBD:
+   either re-initialize the conversation on null lookup, or emit
+   `partner-left` to auto re-pair with a fresh persona.
+3. **Claude API request timeout** — Anthropic SDK default ~60s per call.
+   Handled gracefully — returns null → typing indicator stops → no message.
+   One-off recoverable on next user message.
+
+### Tuning hooks available
+If the new adult prompt lands wrong after user testing:
+- **Too tame:** push `flirtStyle` further, add more explicit reciprocation
+  examples, move "sensual" to top of the trait list
+- **Too forward:** add "only after 5+ messages of chemistry building"
+- **Claude refusing too often:** swap model from `claude-haiku-4-5` to
+  `claude-sonnet-4-6` — more capable, less likely to refuse mid-convo,
+  ~5x cost but still cheap per convo
+
+### Next steps (all carry over from morning session plus one new)
+1. 🔐 **Revoke the exposed `spark chat` key** — still not done
+2. Test the new adult-chat prompt with a real flirty exchange, report back
+3. **Fix the 30-min conversation memory bug** (silent dead chat after idle)
+4. Custom domain (randomchat.example → real domain)
+5. TURN server for strict-NAT users
+6. Railway Hobby / Postgres for SQLite persistence
+7. Generate `og.png`, `favicon.ico`, `apple-touch-icon.png`
+8. Graceful AI fallback message when Claude fails ("brb phone dying 😅")
+
+### Blockers
+None.

@@ -1,11 +1,11 @@
-/* M & G age gate modal */
+/* M & G age gate — violet twilight */
 .ag-backdrop {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: rgba(58, 46, 74, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(10, 8, 20, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,29 +16,43 @@
 .ag-card {
   width: 100%;
   max-width: 460px;
-  background: var(--bg-2, #ffffff);
-  border: 1.5px solid var(--border, #f3d9e6);
-  border-radius: 24px;
-  padding: 36px 32px;
-  box-shadow: 0 20px 60px rgba(197, 179, 230, 0.35);
-  color: var(--text, #3a2e4a);
-  font-family: "Fredoka", "Quicksand", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-2, #12101f);
+  border: 1px solid var(--border, #2a2440);
+  border-radius: 18px;
+  padding: 38px 34px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 60px rgba(157, 78, 221, 0.15);
+  color: var(--text, #e8e4f0);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.ag-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(157, 78, 221, 0.6), transparent);
 }
 
 .ag-title {
-  font-size: 26px;
+  font-family: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  font-size: 30px;
   font-weight: 600;
   margin: 0 0 14px;
   letter-spacing: -0.005em;
   line-height: 1.2;
-  color: var(--text, #3a2e4a);
+  color: var(--text, #e8e4f0);
 }
 
 .ag-body {
-  color: var(--muted, #9a8bae);
+  color: var(--muted, #8a82a0);
   font-size: 14.5px;
-  line-height: 1.65;
+  line-height: 1.7;
   margin: 0 0 26px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .ag-actions {
@@ -49,56 +63,65 @@
 
 .ag-btn {
   width: 100%;
-  padding: 14px 18px;
-  border: 1.5px solid var(--border, #f3d9e6);
-  background: var(--panel, #fdf2f8);
-  color: var(--text, #3a2e4a);
-  border-radius: var(--radius-sm, 14px);
+  padding: 14px 20px;
+  border: 1px solid var(--border, #2a2440);
+  background: var(--panel, #1a1729);
+  color: var(--text, #e8e4f0);
+  border-radius: var(--radius-sm, 10px);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   cursor: pointer;
-  transition: transform 0.12s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
-  font-family: inherit;
+  transition: all 0.2s;
   text-align: center;
   outline: none;
 }
 
-.ag-btn:hover { border-color: var(--accent, #c5b3e6); }
+.ag-btn:hover {
+  border-color: var(--accent, #9d4edd);
+  background: var(--panel-2, #221d34);
+}
 .ag-btn:active { transform: scale(0.98); }
 .ag-btn:focus-visible {
-  border-color: var(--accent, #c5b3e6);
-  box-shadow: 0 0 0 3px rgba(197, 179, 230, 0.4);
+  border-color: var(--accent, #9d4edd);
+  box-shadow: 0 0 0 3px rgba(157, 78, 221, 0.3);
 }
 
 .ag-btn-primary {
-  background: linear-gradient(135deg, #c5b3e6 0%, #a8e6cf 50%, #ffb5a7 100%);
+  background: linear-gradient(135deg, #9d4edd 0%, #c77dff 50%, #ff6b9d 100%);
   border-color: transparent;
   color: #ffffff;
-  box-shadow: 0 10px 30px rgba(197, 179, 230, 0.35);
+  font-weight: 600;
+  box-shadow: 0 0 40px rgba(157, 78, 221, 0.4);
 }
-.ag-btn-primary:hover { filter: brightness(1.05); border-color: transparent; }
+.ag-btn-primary:hover {
+  filter: brightness(1.1);
+  border-color: transparent;
+  box-shadow: 0 0 50px rgba(157, 78, 221, 0.55);
+  transform: translateY(-1px);
+}
 
 .ag-btn-ghost { background: transparent; }
 
 .ag-footer {
-  margin-top: 22px;
+  margin-top: 24px;
   padding-top: 18px;
-  border-top: 1px solid var(--border, #f3d9e6);
+  border-top: 1px solid var(--border, #2a2440);
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 22px;
   font-size: 12.5px;
 }
 
 .ag-footer a {
-  color: var(--muted, #9a8bae);
+  color: var(--muted, #8a82a0);
   text-decoration: none;
   transition: color 0.15s;
 }
-.ag-footer a:hover { color: var(--text, #3a2e4a); }
+.ag-footer a:hover { color: var(--accent-2, #c77dff); }
 
 @media (max-width: 520px) {
   .ag-backdrop { padding: 16px; }
-  .ag-card { padding: 28px 22px; }
-  .ag-title { font-size: 22px; }
+  .ag-card { padding: 30px 22px; }
+  .ag-title { font-size: 24px; }
 }

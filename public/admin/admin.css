@@ -75,7 +75,7 @@
 .tab.active {
   color: var(--text);
   border-bottom-color: var(--accent);
-  background: rgba(197, 179, 230, 0.15);
+  background: rgba(157, 78, 221, 0.15);
 }
 
 /* Tables */
@@ -114,14 +114,14 @@
   vertical-align: top;
 }
 .data-table tbody tr:last-child td { border-bottom: none; }
-.data-table tbody tr:nth-child(even) { background: rgba(197, 179, 230, 0.06); }
-.data-table tbody tr:hover { background: rgba(168, 230, 207, 0.18); }
+.data-table tbody tr:nth-child(even) { background: rgba(157, 78, 221, 0.06); }
+.data-table tbody tr:hover { background: rgba(157, 78, 221, 0.12); }
 
 .data-table .ip-cell,
 .data-table .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12.5px;
-  color: #6a5a8a;
+  color: #c77dff;
 }
 .data-table .reason-cell {
   max-width: 420px;

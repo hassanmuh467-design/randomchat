@@ -197,7 +197,7 @@ function findMatch(socket) {
 // --- AI fallback state -------------------------------------------------------
 const aiPartners = new Map(); // socketId -> true (marks partner as AI)
 const aiTimers = new Map();   // socketId -> setTimeout id (AI queue timer)
-const AI_WAIT_MS = 12_000;    // pair with AI after 12s of waiting
+const AI_WAIT_MS = Number(process.env.AI_WAIT_MS) || 4_000; // pair with AI after 4s of waiting (tunable)
 
 function cancelAiTimer(socketId) {
   const timer = aiTimers.get(socketId);

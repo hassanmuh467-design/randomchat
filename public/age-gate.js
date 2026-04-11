@@ -1,8 +1,4 @@
-/* Age Gate - self-injecting modal
- * Checks localStorage["randomchat_age_ok"]. If not "1", shows a blocking modal.
- * User must actively choose: "I'm 18+" (persists + removes modal) or
- * "I'm under 18" (redirects to google.com).
- */
+// M & G age gate — blocking 18+ modal. Persists choice via localStorage.
 (function () {
   "use strict";
 
@@ -40,7 +36,7 @@
     body.id = "ag-body";
     body.className = "ag-body";
     body.textContent =
-      "RandomChat is an adults-only service. By continuing, you confirm you are at least 18 years old and agree to treat other users with respect. Harassment, nudity involving minors, and illegal content are strictly prohibited and reported to authorities.";
+      "M & G is an adults-only space. By continuing, you confirm you are at least 18 years old and agree to be kind. Harassment, nudity involving minors, and illegal content are strictly prohibited and reported to authorities.";
 
     var actions = document.createElement("div");
     actions.className = "ag-actions";

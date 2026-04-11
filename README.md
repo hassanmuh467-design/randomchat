@@ -1,6 +1,6 @@
-# RandomChat
+# M & G — Meet & Greet
 
-Random 1-on-1 video + text chat with strangers. No sign up.
+Playful 1-on-1 video + text chat. Say hi to someone new in seconds. No sign up.
 
 ## Run locally
 
@@ -23,7 +23,7 @@ Open http://localhost:3000 in **two different browser windows** (or one normal +
 1. Push this folder to a new GitHub repo.
 2. Sign up at **railway.app** or **render.com** (free tier works).
 3. Connect the repo → it auto-detects Node, runs `npm install && npm start`.
-4. It assigns you a URL like `randomchat-production.up.railway.app`. That's your live app.
+4. It assigns you a URL like `meetandgreet-production.up.railway.app`. That's your live app.
 
 > WebRTC requires HTTPS. Both Railway and Render give you HTTPS by default, so this works out of the box.
 
@@ -37,6 +37,6 @@ Open http://localhost:3000 in **two different browser windows** (or one normal +
 |------|---------|
 | `server.js` | Matchmaking + signaling relay |
 | `public/index.html` | UI markup |
-| `public/style.css` | Styling (dark theme, mobile-ready) |
+| `public/style.css` | Styling (pastel theme, mobile-ready) |
 | `public/app.js` | WebRTC client + Socket.io events |
 | `LAUNCH_PLAN.md` | Phased roadmap to launch and grow |

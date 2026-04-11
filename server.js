@@ -1,4 +1,4 @@
-// Random chat signaling server
+// M & G signaling server
 // - Pairs two waiting users together
 // - Relays WebRTC offers/answers/ICE candidates
 // - Handles "next", text messages, and disconnects
@@ -484,5 +484,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`randomchat running at http://localhost:${PORT}`);
+  console.log(`M & G running at http://localhost:${PORT}`);
 });

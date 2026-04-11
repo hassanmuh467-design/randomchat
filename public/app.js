@@ -248,7 +248,7 @@
   });
 
   socket.on("partner-left", () => {
-    addMessage("Stranger disconnected.", "sys");
+    addMessage("Your buddy left. Finding someone new…", "sys");
     closePeer();
     hideAIAvatar();
     paired = false;

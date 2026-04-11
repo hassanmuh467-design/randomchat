@@ -1,7 +1,7 @@
 {
-  "name": "randomchat",
+  "name": "m-and-g",
   "version": "0.1.0",
-  "description": "Random 1-on-1 video and text chat with strangers",
+  "description": "M & G — Meet & Greet. Playful 1-on-1 video and text chat to meet new people.",
   "main": "server.js",
   "type": "module",
   "scripts": {

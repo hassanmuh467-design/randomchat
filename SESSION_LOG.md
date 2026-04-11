@@ -64,3 +64,28 @@
 - Git initialized, not yet pushed to a remote.
 - `data/` gitignored (SQLite DB regenerates on boot).
 - `node_modules/` installed, dev-dep `socket.io-client` added for tests.
+
+## 2026-04-05 — LIVE DEPLOY 🚀
+
+**URL:** https://randomchat-production-ada3.up.railway.app
+
+- GitHub repo: https://github.com/hassanmuh467-design/randomchat
+- Railway project: fabulous-commitment
+- Admin URL: https://randomchat-production-ada3.up.railway.app/admin
+- Admin password: stored in Railway env var `ADMIN_PASSWORD`
+
+**Deploy fix:** Railway picked Node 18 initially, which crashed because
+`lib/db.js` uses `node:sqlite` (added in Node 22). Updated
+`engines.node` to `>=22` and added `.nvmrc`. Commit `90765af`.
+
+**Production smoke tests (all passing):**
+- All 11 static/page endpoints return 200
+- Admin protected: 401 without auth, 401 with wrong password, 200 with correct
+- Admin API: /api/admin/reports and /api/admin/bans return valid JSON
+
+**Still to do (from PRE-LAUNCH-TODO.md):**
+1. Custom domain (replace randomchat.example in 6 files, point DNS)
+2. Generate og.png, favicon.ico, apple-touch-icon.png
+3. Add TURN server to public/app.js rtcConfig
+4. Railway Hobby plan ($5/mo) for persistent volume, OR switch to Postgres —
+   currently SQLite gets wiped on every redeploy.

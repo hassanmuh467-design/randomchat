@@ -89,3 +89,101 @@
 3. Add TURN server to public/app.js rtcConfig
 4. Railway Hobby plan ($5/mo) for persistent volume, OR switch to Postgres —
    currently SQLite gets wiped on every redeploy.
+
+## 2026-04-10 — M & G rebrand + Claude AI integration
+
+Full visual rebrand from "RandomChat" to **M & G — Meet & Greet**, iterated
+through two themes, swapped the AI backend from OpenAI to Anthropic Claude,
+added opposite-gender AI pairing, and shipped fully working end-to-end.
+
+### Shipped commits
+- `14abab6` **Rebrand to M & G — Meet & Greet (playful pastel theme)**
+  — cream + lavender/mint/peach palette, Fredoka rounded font, 15 files
+  updated, brand name + copy swapped everywhere, 40/40 e2e tests still pass.
+  Built with 3 parallel agents (A: core CSS + landing + favicon, B: age
+  gate + admin, C: legal pages + metadata).
+- `1ce4e44` **Violet twilight theme + faster AI fallback**
+  — Pivoted to dark mysterious palette: near-black `#0a0814` with violet
+  `#9d4edd` accent, ember pink `#ff6b9d` highlight, Cormorant Garamond
+  serif headlines + Inter body. 2 parallel agents. Also bumped AI wait
+  from 12s → 4s (then later → 5s).
+- `5ae38d5` **Swap OpenAI for Anthropic Claude + opposite-gender AI + 5s fallback**
+  — Removed `openai` dep, added `@anthropic-ai/sdk@0.88.0`. Rewrote
+  `lib/ai-bot.js` to use `claude-haiku-4-5` with prompt caching
+  (`cache_control: ephemeral` on system block). Added 6 guy personas
+  (jake, mason, luca, ryan, ethan, noah) alongside the 6 girl personas
+  (maya, jess, sarah, alex, nina, chloe). `pickPersona(userGender)` now
+  returns opposite gender. Punched up the flirty voice with
+  gender-specific reaction vocab and opener pools. Added "I'm a [Guy|Girl]"
+  pill toggle on the landing page. Client sends gender in `find` payload;
+  server stores `socket.data.gender` and passes to `startConversation`.
+- `d58c45c` **Mirror local video preview horizontally**
+  — One-line CSS fix: `transform: scaleX(-1)` on `#localVideo` so the
+  PiP behaves like a mirror. Remote video stays un-mirrored.
+
+### Live end-to-end verified
+Ran live socket.io-client tests against production. Both directions
+confirmed in-character and responsive:
+- Guy user → paired with `jess` (girl persona) → opener "omg hi" → user
+  sent "hey whats up" → Claude reply (in character, flirty, short,
+  lowercase with abbreviations).
+- Girl user → paired with `mason` (guy persona) → opener "hey hows it
+  going" → user sent "hey tell me something cool" → Claude replied with
+  a persona-specific message about guitar pedals.
+
+### Gotchas learned (for future sessions)
+- **Railway doesn't auto-deploy on variable changes in current UI.**
+  When you add/edit a variable, Railway shows an **"Apply 1 change"**
+  banner at the top with a **Deploy** button. The change is STAGED
+  until you click Deploy. Easy to miss.
+- **Railway variable edit view reveals plaintext.** Clicking the
+  three-dot menu → Edit on an existing variable shows the full value in
+  a textarea, not a masked field. Don't screenshot while editing.
+  Exposed one key briefly during debugging; had to rotate.
+- **Anthropic "credit balance too low" error is not always literal.**
+  We saw this error persistently even after the org had $9.71 balance,
+  fine rate limits, no spend cap hit, and correct workspace. Root cause
+  was unclear — possibly a sync delay between Stripe payment and API
+  enforcement, or a key-specific issue. Resolution: create a brand new
+  key, replace Railway variable, click **Deploy**. After that everything
+  worked immediately.
+- **Anthropic "Last used: Never" on a key does NOT mean it hasn't been
+  called.** We observed `spark chat` showing "Never used" even though
+  Railway was actively calling the API with it. The UI timestamp seems
+  to lag or only update on successful calls.
+
+### Files touched (today's session)
+- `lib/ai-bot.js` — full rewrite (Anthropic SDK, guy personas, gender-aware)
+- `server.js` — AI_WAIT_MS tunable + gender storage + opposite pairing
+- `public/index.html` — brand swap, gender pill toggle, Fredoka→Cormorant font
+- `public/style.css` — two full rewrites (pastel then dark), gender pill
+  styles, local video mirror transform
+- `public/favicon.svg` — rewritten twice (pastel then violet gradient)
+- `public/app.js` — `getGender()` helper + partner-left copy
+- `public/age-gate.css` — two full rewrites
+- `public/age-gate.js` — M & G brand copy
+- `public/admin/index.html` + `admin.css` — brand + dark theme swaps
+- `public/legal/{terms,privacy,banned}.html` — brand + theme updates
+- `README.md` — title, tagline, stack doc
+- `package.json` — name `m-and-g`, `openai` removed, `@anthropic-ai/sdk` added
+- `.gitignore` — added `.claude/`
+
+### Configured on Railway
+- `ANTHROPIC_API_KEY` — fresh key (`mng-railway`) pasted + Deployed
+- `ADMIN_PASSWORD` — unchanged from prior session
+- All other env vars auto-provisioned by Railway
+
+### Next steps
+1. 🔐 **Revoke the exposed `spark chat` key** at console.anthropic.com →
+   workspaces/default/keys (brief exposure during debugging session)
+2. Monitor Anthropic credit balance — currently $9.71, good for ~3,000
+   Haiku 4.5 conversations
+3. Custom domain still TODO (randomchat.example placeholder in 6 files)
+4. TURN server still TODO — STUN-only fails for ~30% of strict-NAT users
+5. Railway Hobby plan or Postgres migration for SQLite persistence
+6. Generate `og.png`, `favicon.ico`, `apple-touch-icon.png`
+7. Consider: graceful AI fallback message when Claude fails
+   ("brb my phone's dying 😅") instead of silent drop
+
+### Blockers
+None right now. App is live, themed, and AI is responding.
